@@ -4,8 +4,8 @@ import fs from "fs/promises";
 import path from "path";
 import { Document, LocalDB } from "./db/primitive/db-interfaces";
 
-const port = 8080;
-const hostname = "localhost";
+const port = process.env.port || 8080;
+const hostname = process.env.hostname || "localhost";
 const jsonDbPath = path.join(__dirname, "db", "primitive", "db.json");
 
 // DEPRECATE: app DB.
@@ -161,7 +161,7 @@ async function writeDB(path: string, data: string) {
 }
 
 // Start server
-app.listen(port, hostname, (err) => {
+app.listen(hostname, (err) => {
   if (err) {
     console.error(`Failed to start server: ${err}`);
   }
