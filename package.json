@@ -1,0 +1,28 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start-json": "nodemon dist/app-json.js",
+    "setup-json": "npm run build && npm run start-json",
+    "start-mongo": "nodemon dist/app-mongo.js",
+    "setup-mongo": "npm run build && npm run start-mongo"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "mongodb": "^6.13.0"
+  }
+}

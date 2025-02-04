@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!--
+README:
+ 
+- serve it as static file from your web app
+- OR serve it as separate purely static site:
+  1. place this file as `index.html` in new dir
+  2. find a way to host this file with some static server, for example:
+    - download `ran` to this dir from https://github.com/m3ng9i/ran/releases 
+    - run the binary (but ensure that port 8080 is not taken)
+    - open http://localhost:8080 
+    (if port 8080 is busy, find out other way to host the file, or ask in discord)
+    - OR under mac/linux just use: python -m SimpleHTTPServer 8080
+ 
+-->
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Задачник</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="/stylesheets/index-style.css">
+</head>
+<body>
+<div id="app">
+    <header class="header">
+        <h1 class="logo">Ш<span style="color: #27ae60">++</span></h1>  
+    </header>
+    <main>
+        <div class="settings">
+            <h3>Налаштування додатку:</h2>
+            <label>
+                Api URL:
+                <input type="text" v-model="apiURL">
+            </label>
+            <div>
+                Якою мовою бекенд?
+                <button @click="backendLanguage='PHP'" :class="{'selected': backendLanguage === 'PHP'}">PHP</button>
+                <button @click="backendLanguage='JS'"  :class="{'selected': backendLanguage === 'JS'}">JS</button>
+            </div>
+            <div>
+                Версія API
+                <button @click="apiVersion='v1'" :class="{'selected': apiVersion === 'v1'}">v1</button>
+                <button @click="apiVersion='v2'" :class="{'selected': apiVersion === 'v2'}">v2</button>
+            </div>
+            <div>
+                <button @click="getTasks()" class="primary">Вперед!</button>
+            </div>
+        </div>
+        <div class="wrapper login" v-if="step === 'login'">
+            <h3>Доступ до облікового запису</h1>
+            <div class="LoginInput">
+                <input v-model="login" type="text" placeholder="yaropolk@example.com" autofocus required>
+                <input v-model="pass" type="password" placeholder="******" autofocus required>
+            </div>
+            <div class="LoginButton">
+                <button @click="register">Зареєструватись</button>
+                <button @click="logIn" class="primary">Увійти</button>
+            </div>
+        </div>
+        <div class="wrapper" v-else-if="step === 'items'">
+            <h3>Додати нову задачу:</h3>
+            <label style="display: flex;">
+                <input @keyup.enter="addTask" class="new_todo" autofocus autocomplete="on" placeholder="вигуляти кота"
+                    type="text" v-model="new_task.text">
+                <span><button @click="addTask" class="button new_todo_button">Додати</button></span>
+            </label>
+            <h3 class="status_title">{{'Активні задачі: ' + tasks.length}}</h3>
+            <task @task_del="deleteTask(task._id)"
+                    @task_edit="editTask(index)"
+                    @task_done="markAsDone(index, task._id)"
+                    @save="save(index, task._id)"
+                    @disable="disable(index)"
+                    :data="task"
+                    :index="index+1"
+                    v-for="(task, index) in tasks"
+                    :key="index"></task>
+ 
+            <hr>
+            <button @click="logout" class="logout">Вийти &#128682;</button>
+        </div>
+        <div class="wrapper" v-else-if="step === 'error'">
+            Сталася помилка. Відкрийте devtools, щоб побачити подробиці.
+        </div>
+        
+    </main>
+</div>
+<script src="/javascripts/index-script.js"></script>
+</body>
+</html>
