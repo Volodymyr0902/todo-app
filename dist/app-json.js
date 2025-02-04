@@ -16,8 +16,8 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
-const port = 8080;
-const hostname = "localhost";
+const port = process.env.port || 8080;
+const hostname = process.env.hostname || "localhost";
 const jsonDbPath = path_1.default.join(__dirname, "db", "primitive", "db.json");
 // DEPRECATE: app DB.
 // const db: Document[] = [];
@@ -157,7 +157,7 @@ function writeDB(path, data) {
     });
 }
 // Start server
-app.listen(port, hostname, (err) => {
+app.listen(hostname, (err) => {
     if (err) {
         console.error(`Failed to start server: ${err}`);
     }
