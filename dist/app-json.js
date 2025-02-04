@@ -157,7 +157,7 @@ function writeDB(path, data) {
     });
 }
 // Start server
-app.listen(hostname, (err) => {
+app.listen(+port, hostname, (err) => {
     if (err) {
         console.error(`Failed to start server: ${err}`);
     }
