@@ -50,7 +50,7 @@ README:
             <h3>Доступ до облікового запису</h1>
             <div class="LoginInput">
                 <input v-model="login" type="text" placeholder="yaropolk@example.com" autofocus required>
-                <input v-model="pass" type="password" placeholder="******" autofocus required>
+                <input @keyup.enter="logIn" v-model="pass" type="password" placeholder="******" autofocus required>
             </div>
             <div class="LoginButton">
                 <button @click="register">Зареєструватись</button>

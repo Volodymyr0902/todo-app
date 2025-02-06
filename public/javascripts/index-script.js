@@ -173,6 +173,9 @@ let vue = new Vue({
               let params = JSON.stringify({ login: this.login, pass: this.pass });
               const route = this.apiVersion === 'v1' ? '/login' : '/router';
               const qs = {action: this.apiVersion === 'v1' ? '' : 'login'};
+              document.querySelectorAll(".LoginInput input").forEach((input) => {input.value = ''});
+              this.login = '';
+              this.pass = '';
               fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
                   method: this.apiVersion === 'v1' ? 'POST' : 'POST',
                   credentials: 'include',
@@ -188,7 +191,7 @@ let vue = new Vue({
                           this.getTasks();
                           this.step = 'items';
                       } else if (response.error === 'not found') {
-                          alert('Такая комбинация логина и пароля не найдена');
+                          alert('Такого користувача не існує');
                       } else {
                           alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
                       }

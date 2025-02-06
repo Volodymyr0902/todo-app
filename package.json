@@ -5,24 +5,30 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start-json": "nodemon dist/app-json.js",
-    "setup-json": "npm run build && npm run start-json",
-    "start-mongo": "nodemon dist/app-mongo.js",
-    "setup-mongo": "npm run build && npm run start-mongo"
+    "start-demo": "nodemon dist/app-json.js",
+    "setup-demo": "npm run build && npm run start-demo",
+    "start": "nodemon dist/app-mongo.js",
+    "setup": "npm run build && npm run start"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
+    "@types/node": "^22.13.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
+    "connect-mongo": "^5.1.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "mongodb": "^6.13.0"
   }
 }

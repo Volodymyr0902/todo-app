@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import fs from "fs/promises";
 import path from "path";
-import { Document, LocalDB } from "./db/primitive/db-interfaces";
+import { Document, LocalDB } from "./model/primitive/db-interfaces";
 
 const port = process.env.port || 8080;
 const hostname = process.env.hostname || "localhost";
