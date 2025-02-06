@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import { ISingleTodo } from "../model/mongo/interfaces";
+import { ITodoUpd } from "../model/mongo/interfaces";
 import { client } from "../model/mongo/db";
+import { ErrorMessages } from "./error-messages";
 
 const dbName = "todos_db";
 const collectionName = "todos_items";
@@ -15,12 +16,17 @@ export const getAllUserTodos = (req: Request, res: Response) => {
       res.json({ items: items });
     })
     .catch((err) => {
-      console.error(`Failed to get items: ${err}`);
-      res.sendStatus(500);
+      console.error(`${ErrorMessages.DB_INTERNAL}: ${err}`);
+      res.status(500).json({ error: ErrorMessages.DB_INTERNAL });
     });
 };
 
 export const addNewTodo = (req: Request, res: Response) => {
+  if (!req.body.text) {
+    res.status(400).json({ error: ErrorMessages.INVALID_INPUT });
+    return;
+  }
+
   const newItem = {
     text: req.body.text,
     checked: false,
@@ -33,20 +39,20 @@ export const addNewTodo = (req: Request, res: Response) => {
       if (result.acknowledged) {
         res.json({ _id: result.insertedId });
       } else {
-        res.sendStatus(500);
+        throw new Error();
       }
     })
     .catch((err) => {
-      console.error(`Failed to insert new item: ${err}`);
-      res.sendStatus(500);
+      console.error(`${ErrorMessages.INSERTION_FAILED}: ${err}`);
+      res.status(500).json({ error: ErrorMessages.INSERTION_FAILED });
     });
 };
 
 export const updateTodo = (req: Request, res: Response) => {
-  const upd: ISingleTodo = req.body;
+  const upd: ITodoUpd = req.body;
 
-  if (!ObjectId.isValid(upd._id)) {
-    res.status(400).json({ err: "Id is invalid" });
+  if (!isUpdValid(upd)) {
+    res.status(400).json({ error: ErrorMessages.INVALID_INPUT });
     return;
   }
 
@@ -59,19 +65,20 @@ export const updateTodo = (req: Request, res: Response) => {
       if (result.modifiedCount === 1) {
         res.json({ ok: true });
       } else {
-        res.status(404).json({ err: "Item with queried id doesn't exist" });
+        res.status(404).json({ err: ErrorMessages.NOT_FOUND });
       }
     })
     .catch((err) => {
-      console.error(`Failed to update item: ${err}`);
-      res.sendStatus(500);
+      console.error(`${ErrorMessages.UPDATING_FAILED}: ${err}`);
+      res.status(500).json({ error: ErrorMessages.UPDATING_FAILED });
     });
 };
 
 export const deleteTodo = (req: Request, res: Response) => {
   const _id = req.body._id;
+
   if (!ObjectId.isValid(_id)) {
-    res.status(400).json({ err: "Id is invalid" });
+    res.status(400).json({ err: ErrorMessages.INVALID_ID });
     return;
   }
 
@@ -81,11 +88,20 @@ export const deleteTodo = (req: Request, res: Response) => {
       if (result.deletedCount === 1) {
         res.json({ ok: true });
       } else {
-        res.status(404).json({ err: "Item with queried id doesn't exist" });
+        res.status(404).json({ err: ErrorMessages.NOT_FOUND });
       }
     })
     .catch((err) => {
-      console.error(`Failed to delete item: ${err}`);
-      res.sendStatus(500);
+      console.error(`${ErrorMessages.DELETION_FAILED} ${err}`);
+      res.status(500).json({ error: ErrorMessages.DELETION_FAILED });
     });
+};
+
+const isUpdValid = (upd: any): upd is ITodoUpd => {
+  return (
+    upd._id &&
+    ObjectId.isValid(upd._id) &&
+    upd.text &&
+    typeof upd.checked === "boolean"
+  );
 };

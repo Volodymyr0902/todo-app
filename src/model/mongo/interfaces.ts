@@ -1,12 +1,7 @@
-export interface ITodosCollection {
-  items: ISingleTodo[];
-}
-
-export interface ISingleTodo{
+export interface ITodoUpd{
   _id: string;
   text: string;
   checked: boolean;
-  userID: string;
 }
 
 export interface IUser {

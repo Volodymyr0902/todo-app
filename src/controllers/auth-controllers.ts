@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import { client } from "../model/mongo/db";
 import { IUser } from "../model/mongo/interfaces";
+import { ErrorMessages } from "./error-messages";
 
 const sessionName = "sid";
 const dbName = "todos_db";
@@ -14,7 +15,7 @@ export const checkAutorization = (
   next: NextFunction
 ) => {
   if (!req.session.userID) {
-    res.status(302).json({ error: "forbidden" });
+    res.status(302).json({ error: ErrorMessages.FORBIDDEN });
     return;
   }
   next();
@@ -26,14 +27,14 @@ export const login = async (req: Request, res: Response) => {
   const user = await usersCollection.findOne({ login });
 
   if (!user) {
-    res.status(404).json({ error: "not found" });
+    res.status(404).json({ error: ErrorMessages.NOT_FOUND });
     return;
   }
 
   const isMatch = await bcrypt.compare(pass, user.pass);
 
   if (!isMatch) {
-    res.status(404).json({ error: "not found" });
+    res.status(404).json({ error: ErrorMessages.NOT_FOUND });
     return;
   }
 
@@ -41,26 +42,26 @@ export const login = async (req: Request, res: Response) => {
   // regenerate to avoid session fixation (saveUninit then must be set to true)
   req.session.regenerate((err) => {
     if (err) {
-      console.error(`Failed to regenerate session: ${err}`);
-      res.status(500).json({ ok: false });
+      console.error(`${ErrorMessages.SESSION_REGEN}: ${err}`);
+      res.status(500).json({ error: ErrorMessages.SESSION_REGEN });
       return;
     }
   });
   req.session.userID = user._id.toString();
 
   res.json({ ok: true });
-}
+};
 
 export const logout = (req: Request, res: Response) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error(`Failed to destroy session: ${err}`);
-      res.status(500).json({ ok: false });
+      console.error(`${ErrorMessages.SESION_KILL}: ${err}`);
+      res.status(500).json({ error: ErrorMessages.SESION_KILL });
     }
   });
 
   res.clearCookie(sessionName).json({ ok: true });
-}
+};
 
 export const register = async (req: Request, res: Response) => {
   const { login, pass } = req.body;
@@ -68,7 +69,7 @@ export const register = async (req: Request, res: Response) => {
   const user = await usersCollection.findOne({ login });
 
   if (user) {
-    res.status(404).json({ ok: false });
+    res.status(404).json({ error: ErrorMessages.CONFLICT });
     return;
   }
 
@@ -77,12 +78,21 @@ export const register = async (req: Request, res: Response) => {
     pass: await bcrypt.hash(pass, 10),
   };
 
-  const registartionResult = await usersCollection.insertOne(newUser)
+  const registartionResult = await usersCollection.insertOne(newUser);
 
   if (!registartionResult.acknowledged) {
-    res.status(500).json({ ok: false });
+    res.status(500).json({ error: ErrorMessages.REGISTER });
     return;
   }
 
   res.json({ ok: true });
-}
+};
+
+export const validateCredentials = (req: Request, res: Response, next: NextFunction) => {
+  const {login, pass } = req.body
+
+  if (typeof login === "string" && typeof pass === "string") {
+    return next()
+  }
+  res.status(404).json({error: ErrorMessages.NOT_FOUND})
+};

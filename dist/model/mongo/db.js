@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDb = exports.client = void 0;
 const mongodb_1 = require("mongodb");
-const dbURI = process.env.dbURI || 'mongodb://localhost:27017';
+const dbURI = process.env.dbURI || "mongodb://localhost:27017";
 const client = new mongodb_1.MongoClient(dbURI);
 exports.client = client;
 const getDb = () => __awaiter(void 0, void 0, void 0, function* () {

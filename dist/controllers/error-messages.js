@@ -1,0 +1,21 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ErrorMessages = void 0;
+var ErrorMessages;
+(function (ErrorMessages) {
+    ErrorMessages["INVALID_INPUT"] = "Invalid input";
+    ErrorMessages["NOT_FOUND"] = "Not found in DB";
+    ErrorMessages["INSERTION_FAILED"] = "Failed to insert new item";
+    ErrorMessages["UPDATING_FAILED"] = "Failed to update item";
+    ErrorMessages["DELETION_FAILED"] = "Failed to delete item";
+    ErrorMessages["INVALID_ID"] = "Id is invalid";
+    ErrorMessages["FORBIDDEN"] = "forbidden";
+    ErrorMessages["DB_INTERNAL"] = "DB data fetching error";
+    ErrorMessages["SESSION_REGEN"] = "Session regeneration error";
+    ErrorMessages["SESION_KILL"] = "Session destroy error";
+    ErrorMessages["REGISTER"] = "Failed to register new user";
+    ErrorMessages["CONFLICT"] = "User with this login already exists";
+    ErrorMessages["DB_CONN"] = "Failed to connect to DB";
+    ErrorMessages["SERVER_START"] = "Failed to start server";
+    ErrorMessages["INDEX_RENDER"] = "Failed to render index page";
+})(ErrorMessages || (exports.ErrorMessages = ErrorMessages = {}));

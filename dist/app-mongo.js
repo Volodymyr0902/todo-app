@@ -6,10 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_session_1 = __importDefault(require("express-session"));
+const sessions_store_1 = __importDefault(require("./model/mongo/sessions-store"));
 const crud_router_1 = __importDefault(require("./routers/crud-router"));
 const auth_router_1 = __importDefault(require("./routers/auth-router"));
 const db_1 = require("./model/mongo/db");
-const sessions_store_1 = __importDefault(require("./model/mongo/sessions-store"));
+const error_handler_1 = require("./controllers/error-handler");
+const error_messages_1 = require("./controllers/error-messages");
 const port = 8080;
 const hostname = "localhost";
 const app = (0, express_1.default)();
@@ -29,7 +31,7 @@ app.use((0, express_session_1.default)({
     store: sessions_store_1.default,
     cookie: {
         maxAge: 1000 * 60 * 60, // 1 hour
-        sameSite: true,
+        sameSite: "lax",
         httpOnly: true,
         secure: false,
     }
@@ -41,21 +43,22 @@ app.get("/", (req, res) => {
     try {
         res.render("index");
     }
-    catch (error) {
-        console.error(`Failed to render index: ${error}`);
-        res.status(500).json({ error: "Internal server error" });
+    catch (err) {
+        console.error(`${error_messages_1.ErrorMessages.INDEX_RENDER}: ${err}`);
+        res.status(500).json({ error: error_messages_1.ErrorMessages.INDEX_RENDER });
     }
 });
+app.use(error_handler_1.errorHandler);
 // Connect to the DB and start the server
 (0, db_1.getDb)()
     .then(() => {
     app.listen(port, hostname, (err) => {
         if (err) {
-            console.error(`Failed to start server: ${err}`);
+            console.error(`${error_messages_1.ErrorMessages.SERVER_START}: ${err}`);
         }
         console.log(`Server started on ${hostname} on port ${port}...`);
     });
 })
     .catch((err) => {
-    console.error(`Failed to connect to DB: ${err}`);
+    console.error(`${error_messages_1.ErrorMessages.DB_CONN}: ${err}`);
 });

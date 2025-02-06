@@ -193,7 +193,7 @@ let vue = new Vue({
                       } else if (response.error === 'not found') {
                           alert('Такого користувача не існує');
                       } else {
-                          alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                          alert("Сталася помилка")
                       }
                   })
           }
@@ -215,7 +215,7 @@ let vue = new Vue({
                       if (response.ok) {
                           this.logIn();
                       } else {
-                          alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                          alert(response.error)
                       }
                   });
           }

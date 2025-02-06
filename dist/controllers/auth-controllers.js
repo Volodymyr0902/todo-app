@@ -12,16 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = exports.logout = exports.login = exports.checkAutorization = void 0;
+exports.validateCredentials = exports.register = exports.logout = exports.login = exports.checkAutorization = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const db_1 = require("../model/mongo/db");
+const error_messages_1 = require("./error-messages");
 const sessionName = "sid";
 const dbName = "todos_db";
 const collectionName = "users";
 const usersCollection = db_1.client.db(dbName).collection(collectionName);
 const checkAutorization = (req, res, next) => {
     if (!req.session.userID) {
-        res.status(302).json({ error: "forbidden" });
+        res.status(302).json({ error: error_messages_1.ErrorMessages.FORBIDDEN });
         return;
     }
     next();
@@ -31,20 +32,20 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { login, pass } = req.body;
     const user = yield usersCollection.findOne({ login });
     if (!user) {
-        res.status(404).json({ error: "not found" });
+        res.status(404).json({ error: error_messages_1.ErrorMessages.NOT_FOUND });
         return;
     }
     const isMatch = yield bcrypt_1.default.compare(pass, user.pass);
     if (!isMatch) {
-        res.status(404).json({ error: "not found" });
+        res.status(404).json({ error: error_messages_1.ErrorMessages.NOT_FOUND });
         return;
     }
     // In case app gets ext with public resources in future
     // regenerate to avoid session fixation (saveUninit then must be set to true)
     req.session.regenerate((err) => {
         if (err) {
-            console.error(`Failed to regenerate session: ${err}`);
-            res.status(500).json({ ok: false });
+            console.error(`${error_messages_1.ErrorMessages.SESSION_REGEN}: ${err}`);
+            res.status(500).json({ error: error_messages_1.ErrorMessages.SESSION_REGEN });
             return;
         }
     });
@@ -55,8 +56,8 @@ exports.login = login;
 const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
-            console.error(`Failed to destroy session: ${err}`);
-            res.status(500).json({ ok: false });
+            console.error(`${error_messages_1.ErrorMessages.SESION_KILL}: ${err}`);
+            res.status(500).json({ error: error_messages_1.ErrorMessages.SESION_KILL });
         }
     });
     res.clearCookie(sessionName).json({ ok: true });
@@ -66,7 +67,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { login, pass } = req.body;
     const user = yield usersCollection.findOne({ login });
     if (user) {
-        res.status(404).json({ ok: false });
+        res.status(404).json({ error: error_messages_1.ErrorMessages.CONFLICT });
         return;
     }
     const newUser = {
@@ -75,9 +76,17 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     };
     const registartionResult = yield usersCollection.insertOne(newUser);
     if (!registartionResult.acknowledged) {
-        res.status(500).json({ ok: false });
+        res.status(500).json({ error: error_messages_1.ErrorMessages.REGISTER });
         return;
     }
     res.json({ ok: true });
 });
 exports.register = register;
+const validateCredentials = (req, res, next) => {
+    const { login, pass } = req.body;
+    if (typeof login === "string" && typeof pass === "string") {
+        return next();
+    }
+    res.status(404).json({ error: error_messages_1.ErrorMessages.NOT_FOUND });
+};
+exports.validateCredentials = validateCredentials;
