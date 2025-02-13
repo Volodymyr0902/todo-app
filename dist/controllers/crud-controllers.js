@@ -1,11 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTodo = exports.updateTodo = exports.addNewTodo = exports.getAllUserTodos = void 0;
 const mongodb_1 = require("mongodb");
+const dotenv_1 = __importDefault(require("dotenv"));
 const db_1 = require("../model/mongo/db");
 const error_messages_1 = require("./error-messages");
-const dbName = "todos_db";
-const collectionName = "todos_items";
+dotenv_1.default.config();
+const dbName = process.env.DB_NAME || "todos_db";
+const collectionName = process.env.TODOS_COLLECTION || "todos_items";
 const todosCollection = db_1.client.db(dbName).collection(collectionName);
 const getAllUserTodos = (req, res) => {
     todosCollection

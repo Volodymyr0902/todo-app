@@ -1,4 +1,7 @@
 import MongoStore from "connect-mongo";
+import dotenv from "dotenv"
+
+dotenv.config()
 
 export default MongoStore.create({
   mongoUrl: process.env.DB_URI || "mongodb://localhost:27017",

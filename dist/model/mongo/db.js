@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDb = exports.client = void 0;
 const mongodb_1 = require("mongodb");
-const dbURI = process.env.dbURI || "mongodb://localhost:27017";
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const dbURI = process.env.DB_URI || "mongodb://localhost:27017";
 const client = new mongodb_1.MongoClient(dbURI);
 exports.client = client;
 const getDb = () => __awaiter(void 0, void 0, void 0, function* () {

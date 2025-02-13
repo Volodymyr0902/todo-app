@@ -14,11 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateCredentials = exports.register = exports.logout = exports.login = exports.checkAutorization = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const dotenv_1 = __importDefault(require("dotenv"));
 const db_1 = require("../model/mongo/db");
 const error_messages_1 = require("./error-messages");
-const sessionName = "sid";
-const dbName = "todos_db";
-const collectionName = "users";
+dotenv_1.default.config();
+const sessionName = process.env.SESSION_NAME || "sid";
+const dbName = process.env.DB_NAME || "todos_db";
+const collectionName = process.env.USERS_COLLECTION || "users";
 const usersCollection = db_1.client.db(dbName).collection(collectionName);
 const checkAutorization = (req, res, next) => {
     const { action } = req.query;

@@ -1,8 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 import { client } from "../model/mongo/db";
 import { IUser } from "../model/mongo/interfaces";
 import { ErrorMessages } from "./error-messages";
+
+dotenv.config();
 
 const sessionName = process.env.SESSION_NAME || "sid";
 const dbName = process.env.DB_NAME || "todos_db";

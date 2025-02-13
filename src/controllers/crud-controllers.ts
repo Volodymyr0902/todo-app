@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongodb";
+import dotenv from "dotenv";
 import { ITodoUpd } from "../model/mongo/interfaces";
 import { client } from "../model/mongo/db";
 import { ErrorMessages } from "./error-messages";
+
+dotenv.config();
 
 const dbName = process.env.DB_NAME || "todos_db";
 const collectionName = process.env.TODOS_COLLECTION || "todos_items";
