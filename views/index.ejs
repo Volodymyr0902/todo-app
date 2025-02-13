@@ -16,55 +16,37 @@ README:
 <html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Задачник</title>
+    <title>TODOS</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" href="/stylesheets/index-style.css">
+    <link rel="shortcut icon" href="/favicons/list-check.svg" type="image/x-icon">
 </head>
 <body>
 <div id="app">
     <header class="header">
-        <h1 class="logo">Ш<span style="color: #27ae60">++</span></h1>  
+        <h1 class="logo">TODOS</h1>  
+        <h2>All your needs in ONE place!</h2>
     </header>
     <main>
-        <div class="settings">
-            <h3>Налаштування додатку:</h2>
-            <label>
-                Api URL:
-                <input type="text" v-model="apiURL">
-            </label>
-            <div>
-                Якою мовою бекенд?
-                <button @click="backendLanguage='PHP'" :class="{'selected': backendLanguage === 'PHP'}">PHP</button>
-                <button @click="backendLanguage='JS'"  :class="{'selected': backendLanguage === 'JS'}">JS</button>
-            </div>
-            <div>
-                Версія API
-                <button @click="apiVersion='v1'" :class="{'selected': apiVersion === 'v1'}">v1</button>
-                <button @click="apiVersion='v2'" :class="{'selected': apiVersion === 'v2'}">v2</button>
-            </div>
-            <div>
-                <button @click="getTasks()" class="primary">Вперед!</button>
-            </div>
-        </div>
         <div class="wrapper login" v-if="step === 'login'">
-            <h3>Доступ до облікового запису</h1>
+            <h3>Account access</h1>
             <div class="LoginInput">
-                <input v-model="login" type="text" placeholder="yaropolk@example.com" autofocus required>
+                <input v-model="login" type="text" placeholder="yaropolk@example.com" autocomplete="on" autofocus required>
                 <input @keyup.enter="logIn" v-model="pass" type="password" placeholder="******" autofocus required>
             </div>
             <div class="LoginButton">
-                <button @click="register">Зареєструватись</button>
-                <button @click="logIn" class="primary">Увійти</button>
+                <button @click="register">Register</button>
+                <button @click="logIn" class="primary">Login</button>
             </div>
         </div>
         <div class="wrapper" v-else-if="step === 'items'">
-            <h3>Додати нову задачу:</h3>
+            <h3>Add new task:</h3>
             <label style="display: flex;">
-                <input @keyup.enter="addTask" class="new_todo" autofocus autocomplete="on" placeholder="вигуляти кота"
+                <input @keyup.enter="addTask" class="new_todo" autofocus autocomplete="on" placeholder="walk out neighbour's cat"
                     type="text" v-model="new_task.text">
-                <span><button @click="addTask" class="button new_todo_button">Додати</button></span>
+                <span><button @click="addTask" class="button new_todo_button">Add</button></span>
             </label>
-            <h3 class="status_title">{{'Активні задачі: ' + tasks.length}}</h3>
+            <h3 class="status_title">{{'Current tasks: ' + tasks.length}}</h3>
             <task @task_del="deleteTask(task._id)"
                     @task_edit="editTask(index)"
                     @task_done="markAsDone(index, task._id)"
@@ -76,10 +58,10 @@ README:
                     :key="index"></task>
  
             <hr>
-            <button @click="logout" class="logout">Вийти &#128682;</button>
+            <button @click="logout" class="logout">Log out &#128682;</button>
         </div>
         <div class="wrapper" v-else-if="step === 'error'">
-            Сталася помилка. Відкрийте devtools, щоб побачити подробиці.
+            An error occured. Open DevTools for details.
         </div>
         
     </main>

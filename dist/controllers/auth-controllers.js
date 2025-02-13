@@ -21,7 +21,8 @@ const dbName = "todos_db";
 const collectionName = "users";
 const usersCollection = db_1.client.db(dbName).collection(collectionName);
 const checkAutorization = (req, res, next) => {
-    if (!req.session.userID) {
+    const { action } = req.query;
+    if (!req.session.userID && action !== "login" && action !== "register") {
         res.status(302).json({ error: error_messages_1.ErrorMessages.FORBIDDEN });
         return;
     }
@@ -32,23 +33,23 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { login, pass } = req.body;
     const user = yield usersCollection.findOne({ login });
     if (!user) {
-        res.status(404).json({ error: error_messages_1.ErrorMessages.NOT_FOUND });
+        res.status(404).json({ error: error_messages_1.ErrorMessages.BAD_CREDENTIALS });
         return;
     }
     const isMatch = yield bcrypt_1.default.compare(pass, user.pass);
     if (!isMatch) {
-        res.status(404).json({ error: error_messages_1.ErrorMessages.NOT_FOUND });
+        res.status(404).json({ error: error_messages_1.ErrorMessages.BAD_CREDENTIALS });
         return;
     }
     // In case app gets ext with public resources in future
     // regenerate to avoid session fixation (saveUninit then must be set to true)
-    req.session.regenerate((err) => {
-        if (err) {
-            console.error(`${error_messages_1.ErrorMessages.SESSION_REGEN}: ${err}`);
-            res.status(500).json({ error: error_messages_1.ErrorMessages.SESSION_REGEN });
-            return;
-        }
-    });
+    // req.session.regenerate((err) => {
+    //   if (err) {
+    //     console.error(`${ErrorMessages.SESSION_REGEN}: ${err}`);
+    //     res.status(500).json({ error: ErrorMessages.SESSION_REGEN });
+    //     return;
+    //   }
+    // });
     req.session.userID = user._id.toString();
     res.json({ ok: true });
 });
@@ -87,6 +88,6 @@ const validateCredentials = (req, res, next) => {
     if (typeof login === "string" && typeof pass === "string") {
         return next();
     }
-    res.status(404).json({ error: error_messages_1.ErrorMessages.NOT_FOUND });
+    res.status(404).json({ error: error_messages_1.ErrorMessages.INVALID_INPUT });
 };
 exports.validateCredentials = validateCredentials;

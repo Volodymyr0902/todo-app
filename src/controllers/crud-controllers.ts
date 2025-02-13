@@ -4,8 +4,8 @@ import { ITodoUpd } from "../model/mongo/interfaces";
 import { client } from "../model/mongo/db";
 import { ErrorMessages } from "./error-messages";
 
-const dbName = "todos_db";
-const collectionName = "todos_items";
+const dbName = process.env.DB_NAME || "todos_db";
+const collectionName = process.env.TODOS_COLLECTION || "todos_items";
 const todosCollection = client.db(dbName).collection(collectionName);
 
 export const getAllUserTodos = (req: Request, res: Response) => {
@@ -65,7 +65,7 @@ export const updateTodo = (req: Request, res: Response) => {
       if (result.modifiedCount === 1) {
         res.json({ ok: true });
       } else {
-        res.status(404).json({ err: ErrorMessages.NOT_FOUND });
+        res.status(404).json({ err: ErrorMessages.NO_MATCH });
       }
     })
     .catch((err) => {
@@ -88,7 +88,7 @@ export const deleteTodo = (req: Request, res: Response) => {
       if (result.deletedCount === 1) {
         res.json({ ok: true });
       } else {
-        res.status(404).json({ err: ErrorMessages.NOT_FOUND });
+        res.status(404).json({ err: ErrorMessages.NO_MATCH });
       }
     })
     .catch((err) => {

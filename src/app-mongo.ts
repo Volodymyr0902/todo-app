@@ -1,33 +1,41 @@
 import express from "express";
 import bodyParser from "body-parser";
 import session from "express-session";
+import cors from "cors";
+import dotenv from "dotenv";
 import sessionsStore from "./model/mongo/sessions-store";
 import crudRouter from "./routers/crud-router";
 import authRouter from "./routers/auth-router";
+import uniRouter from "./routers/uni-router";
 import { getDb } from "./model/mongo/db";
 import { errorHandler } from "./controllers/error-handler";
 import { ErrorMessages } from "./controllers/error-messages";
 
-const port = 8080;
-const hostname = "localhost";
+dotenv.config();
+
+const port = process.env.PORT ? parseInt(process.env.PORT) : 8080;
+const hostname = process.env.HOST || "localhost";
 
 const app = express();
 
-// Set the view engine
 app.set("view engine", "ejs");
 
-// Serve static files
-app.use(express.static("public"));
+app.use(
+  cors({
+    origin: process.env.CLIENT || 'http://localhost:5500',
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
-// Apply parsers
+app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session settings
 app.use(
   session({
-    name: "sid",
-    secret: "super-secret-key",
+    name: process.env.SESSION_NAME || "sid",
+    secret: process.env.SESSION_SECRET || "super-secret-key",
     resave: false,
     saveUninitialized: false,
     store: sessionsStore,
@@ -36,12 +44,12 @@ app.use(
       sameSite: "lax",
       httpOnly: true,
       secure: false,
-    }
+    },
   })
 );
 
-// Apply routers
-app.use("/api/v1", crudRouter, authRouter);
+app.use("/api/v1", crudRouter, authRouter); // divided
+app.use("/api/v2", uniRouter); // using query string
 
 // Render the main page
 app.get("/", (req, res) => {
@@ -53,7 +61,7 @@ app.get("/", (req, res) => {
   }
 });
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 // Connect to the DB and start the server
 getDb()

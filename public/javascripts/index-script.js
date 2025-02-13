@@ -89,7 +89,7 @@ let vue = new Vue({
                   if (response['ok'] === true) {
                       this.getTasks()
                   } else {
-                      alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                      alert("An error occured. Open DevTools for details.")
                   }
               });
       },
@@ -111,7 +111,7 @@ let vue = new Vue({
                           this.getTasks();
                           this.$set(this.new_task, 'text', '');
                       } else {
-                          alert("Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.")
+                          alert("An error occured. Open DevTools for details.")
                       }
                   });
           }
@@ -157,9 +157,9 @@ let vue = new Vue({
       logout() {
           const route = this.apiVersion === 'v1' ? '/logout' : '/router';
           const qs = {action: this.apiVersion === 'v1' ? '' : 'logout'};
-          fetch(this.apiURL + this.apiVersion + route, {
+          fetch(this.apiURL + this.apiVersion + route + this.backendSuffix + '?' + new URLSearchParams(qs), {
               method: this.apiVersion === 'v1' ? 'POST' : 'POST',
-              credentials: 'include',
+              credentials: "include",
           }).then(res => res.json())
               .then((response) => {
                   if (response.ok) {
@@ -191,9 +191,9 @@ let vue = new Vue({
                           this.getTasks();
                           this.step = 'items';
                       } else if (response.error === 'not found') {
-                          alert('Такого користувача не існує');
+                          alert("Such user doesn't exist");
                       } else {
-                          alert("Сталася помилка")
+                          alert("An error occured. Open DevTools for details.")
                       }
                   })
           }
@@ -221,4 +221,7 @@ let vue = new Vue({
           }
       },
   },
+  mounted: function() {
+    this.getTasks()
+  }
 });

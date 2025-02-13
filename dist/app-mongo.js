@@ -6,23 +6,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_session_1 = __importDefault(require("express-session"));
+const cors_1 = __importDefault(require("cors"));
 const sessions_store_1 = __importDefault(require("./model/mongo/sessions-store"));
 const crud_router_1 = __importDefault(require("./routers/crud-router"));
 const auth_router_1 = __importDefault(require("./routers/auth-router"));
+const uni_router_1 = __importDefault(require("./routers/uni-router"));
 const db_1 = require("./model/mongo/db");
 const error_handler_1 = require("./controllers/error-handler");
 const error_messages_1 = require("./controllers/error-messages");
 const port = 8080;
 const hostname = "localhost";
 const app = (0, express_1.default)();
-// Set the view engine
 app.set("view engine", "ejs");
-// Serve static files
+app.use((0, cors_1.default)({
+    origin: "http://localhost:5500",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 app.use(express_1.default.static("public"));
-// Apply parsers
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
-// Session settings
 app.use((0, express_session_1.default)({
     name: "sid",
     secret: "super-secret-key",
@@ -36,8 +39,8 @@ app.use((0, express_session_1.default)({
         secure: false,
     }
 }));
-// Apply routers
-app.use("/api/v1", crud_router_1.default, auth_router_1.default);
+app.use("/api/v1", crud_router_1.default, auth_router_1.default); // divided
+app.use("/api/v2", uni_router_1.default); // using query string
 // Render the main page
 app.get("/", (req, res) => {
     try {

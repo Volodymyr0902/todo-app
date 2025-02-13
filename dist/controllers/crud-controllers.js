@@ -59,7 +59,7 @@ const updateTodo = (req, res) => {
             res.json({ ok: true });
         }
         else {
-            res.status(404).json({ err: error_messages_1.ErrorMessages.NOT_FOUND });
+            res.status(404).json({ err: error_messages_1.ErrorMessages.NO_MATCH });
         }
     })
         .catch((err) => {
@@ -81,7 +81,7 @@ const deleteTodo = (req, res) => {
             res.json({ ok: true });
         }
         else {
-            res.status(404).json({ err: error_messages_1.ErrorMessages.NOT_FOUND });
+            res.status(404).json({ err: error_messages_1.ErrorMessages.NO_MATCH });
         }
     })
         .catch((err) => {

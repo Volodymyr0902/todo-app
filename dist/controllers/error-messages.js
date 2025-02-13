@@ -4,7 +4,7 @@ exports.ErrorMessages = void 0;
 var ErrorMessages;
 (function (ErrorMessages) {
     ErrorMessages["INVALID_INPUT"] = "Invalid input";
-    ErrorMessages["NOT_FOUND"] = "Not found in DB";
+    ErrorMessages["NO_MATCH"] = "Not found in DB";
     ErrorMessages["INSERTION_FAILED"] = "Failed to insert new item";
     ErrorMessages["UPDATING_FAILED"] = "Failed to update item";
     ErrorMessages["DELETION_FAILED"] = "Failed to delete item";
@@ -18,4 +18,6 @@ var ErrorMessages;
     ErrorMessages["DB_CONN"] = "Failed to connect to DB";
     ErrorMessages["SERVER_START"] = "Failed to start server";
     ErrorMessages["INDEX_RENDER"] = "Failed to render index page";
+    ErrorMessages["BAD_CREDENTIALS"] = "Received login and password doesn't match any combination of existing";
+    ErrorMessages["NOT_FOUND"] = "Queried resourse doesn't exist";
 })(ErrorMessages || (exports.ErrorMessages = ErrorMessages = {}));

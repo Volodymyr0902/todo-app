@@ -1,10 +1,15 @@
 {
-  "idCounter": 40,
+  "idCounter": 61,
   "items": [
     {
-      "text": "klke;wfjkl",
-      "id": 39,
-      "checked": true
+      "_id": 59,
+      "text": "4",
+      "checked": false
+    },
+    {
+      "_id": 60,
+      "text": "8",
+      "checked": false
     }
   ]
 }

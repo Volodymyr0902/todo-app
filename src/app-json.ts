@@ -81,7 +81,7 @@ app
       .then((data) => {
         const db = JSON.parse(data);
         const newItem: Document = {
-          id: db.idCounter++,
+          _id: db.idCounter++,
           text: req.body.text,
           checked: false,
         };
@@ -89,7 +89,7 @@ app
 
         writeDB(jsonDbPath, JSON.stringify(db, null, 2))
           .then(() => {
-            res.json({ id: db.idCounter });
+            res.json({ _id: db.idCounter });
           })
           .catch((err) => {
             console.error(`Failed to write DB: ${err}`);
@@ -108,7 +108,7 @@ app
       .then((data) => {
         const db: LocalDB = JSON.parse(data);
 
-        const indexOfId = db.items.findIndex((el) => el.id === updates.id);
+        const indexOfId = db.items.findIndex((el) => el._id === updates._id);
         if (indexOfId === -1) res.sendStatus(400);
         db.items[indexOfId] = updates;
 
@@ -127,13 +127,13 @@ app
       });
   })
   .delete((req, res) => {
-    const id = req.body.id;
+    const _id = req.body._id;
 
     readDB(jsonDbPath)
       .then((data) => {
         const db: LocalDB = JSON.parse(data);
 
-        const indexOfId = db.items.findIndex((el) => el.id === id);
+        const indexOfId = db.items.findIndex((el) => el._id === _id);
         if (indexOfId === -1) res.sendStatus(400);
         db.items.splice(indexOfId, 1);
 

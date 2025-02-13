@@ -1,5 +1,5 @@
 export interface Document {
-  id: number;
+  _id: number;
   text: string;
   checked: boolean;
 }
