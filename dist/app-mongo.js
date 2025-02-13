@@ -36,9 +36,11 @@ app.use((0, express_session_1.default)({
     store: sessions_store_1.default,
     cookie: {
         maxAge: 1000 * 60 * 60, // 1 hour
-        sameSite: "lax",
+        // sameSite: "lax",
+        sameSite: "none",
         httpOnly: true,
-        secure: false,
+        // secure: false,
+        secure: true,
     },
 }));
 app.use("/api/v1", crud_router_1.default, auth_router_1.default); // divided
