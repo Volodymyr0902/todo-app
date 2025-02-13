@@ -41,9 +41,11 @@ app.use(
     store: sessionsStore,
     cookie: {
       maxAge: 1000 * 60 * 60, // 1 hour
-      sameSite: "lax",
+      // sameSite: "lax",
+      sameSite: "none",
       httpOnly: true,
-      secure: false,
+      // secure: false,
+      secure: true,
     },
   })
 );
