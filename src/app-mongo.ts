@@ -20,6 +20,8 @@ const app = express();
 
 app.set("view engine", "ejs");
 
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: process.env.CLIENT || 'http://localhost:5500',

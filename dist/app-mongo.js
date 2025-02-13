@@ -20,6 +20,7 @@ const port = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 const hostname = process.env.HOST || "localhost";
 const app = (0, express_1.default)();
 app.set("view engine", "ejs");
+app.set("trust proxy", 1);
 app.use((0, cors_1.default)({
     origin: process.env.CLIENT || 'http://localhost:5500',
     methods: ["GET", "POST", "PUT", "DELETE"],
