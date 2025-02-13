@@ -24,7 +24,7 @@ app.use((0, cors_1.default)({
     origin: process.env.CLIENT || 'http://localhost:5500',
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-    exposedHeaders: ["Set-Cookie"]
+    exposedHeaders: ["set-cookie"]
 }));
 app.use(express_1.default.static("public"));
 app.use(body_parser_1.default.json());

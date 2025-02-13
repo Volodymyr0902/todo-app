@@ -25,7 +25,7 @@ app.use(
     origin: process.env.CLIENT || 'http://localhost:5500',
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-    exposedHeaders: ["Set-Cookie"]
+    exposedHeaders: ["set-cookie"]
   })
 );
 
