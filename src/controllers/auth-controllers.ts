@@ -54,8 +54,6 @@ export const login = async (req: Request, res: Response) => {
   // });
   req.session.userID = user._id.toString();
 
-  console.log(res.getHeaders())
-
   res.json({ ok: true });
 };
 

@@ -53,7 +53,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //   }
     // });
     req.session.userID = user._id.toString();
-    console.log(res.getHeaders());
     res.json({ ok: true });
 });
 exports.login = login;
