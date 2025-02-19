@@ -18,6 +18,6 @@ var ErrorMessages;
     ErrorMessages["DB_CONN"] = "Failed to connect to DB";
     ErrorMessages["SERVER_START"] = "Failed to start server";
     ErrorMessages["INDEX_RENDER"] = "Failed to render index page";
-    ErrorMessages["BAD_CREDENTIALS"] = "Received login and password doesn't match any combination of existing";
+    ErrorMessages["BAD_CREDENTIALS"] = "Such user doesn't exist";
     ErrorMessages["NOT_FOUND"] = "Queried resourse doesn't exist";
 })(ErrorMessages || (exports.ErrorMessages = ErrorMessages = {}));

@@ -1,16 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { client } from "../model/mongo/db";
-import { IUser } from "../model/mongo/interfaces";
+import connection from "../model/mysql/connection";
+import { IUser } from "../model/mysql/interfaces";
 import { ErrorMessages } from "./error-messages";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 dotenv.config();
-
 const sessionName = process.env.SESSION_NAME || "sid";
-const dbName = process.env.DB_NAME || "todos_db";
-const collectionName = process.env.USERS_COLLECTION || "users";
-const usersCollection = client.db(dbName).collection(collectionName);
 
 export const checkAutorization = (
   req: Request,
@@ -29,14 +26,16 @@ export const checkAutorization = (
 export const login = async (req: Request, res: Response) => {
   const { login, pass } = req.body;
 
-  const user = await usersCollection.findOne({ login });
+  const sql = "SELECT * FROM users WHERE login = ?";
+  const [rows] = await connection.execute<RowDataPacket[]>(sql, [login]);
 
-  if (!user) {
+  if (rows.length === 0) {
     res.status(404).json({ error: ErrorMessages.BAD_CREDENTIALS });
     return;
   }
 
-  const isMatch = await bcrypt.compare(pass, user.pass);
+  const user = rows[0];
+  const isMatch = await bcrypt.compare(pass, user.password);
 
   if (!isMatch) {
     res.status(404).json({ error: ErrorMessages.BAD_CREDENTIALS });
@@ -45,13 +44,13 @@ export const login = async (req: Request, res: Response) => {
 
   // In case app gets ext with public resources in future
   // regenerate to avoid session fixation (saveUninit then must be set to true)
-  // req.session.regenerate((err) => {
-  //   if (err) {
-  //     console.error(`${ErrorMessages.SESSION_REGEN}: ${err}`);
-  //     res.status(500).json({ error: ErrorMessages.SESSION_REGEN });
-  //     return;
-  //   }
-  // });
+  req.session.regenerate((err) => {
+    if (err) {
+      console.error(`${ErrorMessages.SESSION_REGEN}: ${err}`);
+      res.status(500).json({ error: ErrorMessages.SESSION_REGEN });
+      return;
+    }
+  });
   req.session.userID = user._id.toString();
 
   res.json({ ok: true });
@@ -71,9 +70,11 @@ export const logout = (req: Request, res: Response) => {
 export const register = async (req: Request, res: Response) => {
   const { login, pass } = req.body;
 
-  const user = await usersCollection.findOne({ login });
+  // const user = await usersCollection.findOne({ login });
+  const selSQL = "SELECT * FROM users WHERE login = ?";
+  const [rows] = await connection.execute<RowDataPacket[]>(selSQL, [login]);
 
-  if (user) {
+  if (rows.length !== 0) {
     res.status(404).json({ error: ErrorMessages.CONFLICT });
     return;
   }
@@ -83,9 +84,13 @@ export const register = async (req: Request, res: Response) => {
     pass: await bcrypt.hash(pass, 10),
   };
 
-  const registartionResult = await usersCollection.insertOne(newUser);
+  const insSQL = "INSERT INTO users (login, password) VALUES (?, ?)";
+  const [result] = await connection.execute<ResultSetHeader>(insSQL, [
+    newUser.login,
+    newUser.pass,
+  ]);
 
-  if (!registartionResult.acknowledged) {
+  if (!result.insertId) {
     res.status(500).json({ error: ErrorMessages.REGISTER });
     return;
   }

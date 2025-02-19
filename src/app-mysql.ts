@@ -3,13 +3,15 @@ import bodyParser from "body-parser";
 import session from "express-session";
 import cors from "cors";
 import dotenv from "dotenv";
-import sessionsStore from "./model/mongo/sessions-store";
+import sessionsStore from "./model/mysql/sessions-store";
 import crudRouter from "./routers/crud-router";
 import authRouter from "./routers/auth-router";
 import uniRouter from "./routers/uni-router";
-import { getDb } from "./model/mongo/db";
+import connection from "./model/mysql/connection";
 import { errorHandler } from "./controllers/error-handler";
 import { ErrorMessages } from "./controllers/error-messages";
+import { configDB } from "./model/mysql/db-config";
+export { session };
 
 dotenv.config();
 
@@ -24,10 +26,10 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: process.env.CLIENT || 'http://localhost:5500',
+    origin: process.env.CLIENT || "http://localhost:5500",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-    exposedHeaders: ["set-cookie"]
+    exposedHeaders: ["set-cookie"],
   })
 );
 
@@ -67,7 +69,9 @@ app.get("/", (req, res) => {
 app.use(errorHandler);
 
 // Connect to the DB and start the server
-getDb()
+connection
+  .ping()
+  .then(configDB)
   .then(() => {
     app.listen(port, hostname, (err) => {
       if (err) {

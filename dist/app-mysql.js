@@ -3,18 +3,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.session = void 0;
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_session_1 = __importDefault(require("express-session"));
+exports.session = express_session_1.default;
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const sessions_store_1 = __importDefault(require("./model/mongo/sessions-store"));
+const sessions_store_1 = __importDefault(require("./model/mysql/sessions-store"));
 const crud_router_1 = __importDefault(require("./routers/crud-router"));
 const auth_router_1 = __importDefault(require("./routers/auth-router"));
 const uni_router_1 = __importDefault(require("./routers/uni-router"));
-const db_1 = require("./model/mongo/db");
+const connection_1 = __importDefault(require("./model/mysql/connection"));
 const error_handler_1 = require("./controllers/error-handler");
 const error_messages_1 = require("./controllers/error-messages");
+const db_config_1 = require("./model/mysql/db-config");
 dotenv_1.default.config();
 const port = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 const hostname = process.env.HOST || "localhost";
@@ -22,10 +25,10 @@ const app = (0, express_1.default)();
 app.set("view engine", "ejs");
 app.set("trust proxy", 1);
 app.use((0, cors_1.default)({
-    origin: process.env.CLIENT || 'http://localhost:5500',
+    origin: process.env.CLIENT || "http://localhost:5500",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-    exposedHeaders: ["set-cookie"]
+    exposedHeaders: ["set-cookie"],
 }));
 app.use(express_1.default.static("public"));
 app.use(body_parser_1.default.json());
@@ -57,7 +60,9 @@ app.get("/", (req, res) => {
 });
 app.use(error_handler_1.errorHandler);
 // Connect to the DB and start the server
-(0, db_1.getDb)()
+connection_1.default
+    .ping()
+    .then(db_config_1.configDB)
     .then(() => {
     app.listen(port, hostname, (err) => {
         if (err) {

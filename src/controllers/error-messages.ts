@@ -14,6 +14,6 @@ export enum ErrorMessages {
   DB_CONN = "Failed to connect to DB",
   SERVER_START = "Failed to start server",
   INDEX_RENDER = "Failed to render index page",
-  BAD_CREDENTIALS = "Received login and password doesn't match any combination of existing",
+  BAD_CREDENTIALS = "Such user doesn't exist",
   NOT_FOUND = "Queried resourse doesn't exist",
 }

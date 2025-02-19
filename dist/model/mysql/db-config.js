@@ -8,14 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDb = exports.client = void 0;
-const mongodb_1 = require("mongodb");
-const dbURI = process.env.dbURI || 'mongodb://localhost:27017';
-const client = new mongodb_1.MongoClient(dbURI);
-exports.client = client;
-const getDb = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield client.connect();
-    return client.db();
+exports.configDB = void 0;
+const connection_1 = __importDefault(require("./connection"));
+const promises_1 = __importDefault(require("fs/promises"));
+const path_1 = __importDefault(require("path"));
+const configDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const sqlPath = path_1.default.resolve(__dirname, "../../../queries/config.sql");
+    const sql = yield promises_1.default.readFile(sqlPath, { encoding: "utf8" });
+    yield connection_1.default.query(sql);
 });
-exports.getDb = getDb;
+exports.configDB = configDB;

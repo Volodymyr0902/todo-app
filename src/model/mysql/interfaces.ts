@@ -1,4 +1,4 @@
-export interface ITodoUpd{
+export interface ITodoUpd {
   _id: string;
   text: string;
   checked: boolean;
